@@ -1,10 +1,11 @@
+import numpy as np
 """ 
 Arima model class 
 """
 
 
 
-class arima_model():
+class Arima_model():
     """
     A class representing the arima model 
     
@@ -59,8 +60,10 @@ class arima_model():
         rmse = mean_squared_error(test, predictions, squared=False)
         return model_fit.aic, model_fit, test, predictions, anomalies, upperLim, lowerLim
     
-    def arima_model_anomalies(data):
+    def arima_model_anomalies(self, data):
         """
         Trains 
         """
         
+        rmse, model, test, preds,anomalies,upper,lower = self.eval_arima(np.log(data),(3,0,2),.01,75)
+        return anomalies
