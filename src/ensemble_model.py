@@ -1,7 +1,8 @@
 from mad import MAD_model
-from arima import Arima_model
 from etl import aggregate_data
 import pandas as pd
+from arima import Arima_model
+
     
 
 class Ensemble():
@@ -11,18 +12,19 @@ class Ensemble():
 
     def anomaly_ensemble(self, data, window):
         
-        data = aggregate_data(data, window)
         
-        DF_m = pd.DataFrame(data)
-        df_a = pd.DataFrame(data)
-
-        # train arima model & get anomalies 
-        arima = Arima_model((3,0,2), .01, 75)
-        arima_anomalies = arima.arima_model_anomalies(df_a)
+        df_agg, df = aggregate_data(data, window)
+       
+        DF_m = pd.DataFrame(df)
+        df_a = pd.DataFrame(df_agg)
+        
+#         # train arima model & get anomalies 
+#         arima = Arima_model((3,0,2), .01, 75)
+#         arima_anomalies = arima.arima_model_anomalies(arima, df_a)
 
         # train mad model & get anomalies 
-        mad = detect_anomaly()
-        mad_anomalies = mad.MAD_anomalies(DF_m)
+        mad = MAD_model(window)
+        mad_anomalies = mad.MAD_anomalies(mad, DF_m.total_pkts)
 
         DF['anomaly'] = list(np.zeros(shape=(1,len(DF)-len(arima_anomalies)))[0]) + arima_anomalies
         df['anomaly'] = 0

@@ -1,3 +1,5 @@
+import numpy as np 
+
 '''
 the data (x) is a 1 dimentional numpy array of the 1->2 packets
 '''
@@ -35,8 +37,11 @@ class MAD_model():
             subset = x[i:i+self.window_size]
             m = np.median(subset)
             median = median + [m]
-            dm = dm + [np.sum((subset-m))/window]
+            dm = dm + [np.sum((subset-m))/self.window]
             mad = mad + [mad_f(subset)]
+        
+        print(np.shape(mad))
+        print(np.shape(dm))
         
         transform = np.array(mad)*dm / median
         self.median = median
@@ -96,12 +101,11 @@ class MAD_model():
             plt.savefig(filepath)
 
 
-    def MAD_anomalies(data): 
+    def MAD_anomalies(self, model, data): 
         """
         Outputs list of anomaly predictions 
         """
         X = np.array(data)
-        model = MAD_model(80)
         anomalies_indexes = model.detect_anomaly(X)
         binary_anomaly_list = []
         for i in range(len(data)): 

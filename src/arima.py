@@ -1,4 +1,6 @@
 import numpy as np
+from statsmodels.tsa.arima.model import ARIMA
+from sklearn.metrics import mean_squared_error
 """ 
 Arima model class 
 """
@@ -40,7 +42,7 @@ class Arima_model():
         anomalies = []
         upperLim = []
         lowerLim = []
-        for t in range(test_n, len(test) + test_n):
+        for t in range(self.test_n, len(test) + self.test_n):
             model = ARIMA(history, order = self.arima_order)
             model_fit = model.fit(method_kwargs={"warn_convergence": False})
             output = model_fit.forecast()
@@ -60,10 +62,10 @@ class Arima_model():
         rmse = mean_squared_error(test, predictions, squared=False)
         return model_fit.aic, model_fit, test, predictions, anomalies, upperLim, lowerLim
     
-    def arima_model_anomalies(self, data):
+    def arima_model_anomalies(self, model, data):
         """
         Trains 
         """
-        
-        rmse, model, test, preds,anomalies,upper,lower = self.eval_arima(np.log(data),(3,0,2),.01,75)
+           
+        rmse, model, test, preds,anomalies,upper,lower = model.eval_arima(np.log(data.total_pkts.astype(float)))
         return anomalies
